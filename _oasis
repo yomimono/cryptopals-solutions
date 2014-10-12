@@ -1,0 +1,48 @@
+Name: CryptopalsSet1
+Version: 0.1
+Synopsis: Solutions to the Matasano Cryptopals Challenges (Set 1)
+Authors: Mindy Preston (meetup@yomimono.org)
+License: LGPL
+
+Description: OCaml modules for solving problems from Cryptopals Set 1.
+
+OASISFormat: 0.4
+BuildTools: ocamlbuild
+Plugins: META (0.4), DevFiles (0.4)
+
+Library bytestring
+  Path: .
+  Modules: Bytestring
+
+Executable "test_base64"
+  Path: .
+  MainIs: test_base64.ml
+  Build$: flag(tests) 
+  BuildDepends: oUnit
+
+Executable test_fixed_xor
+  Path: .
+  MainIs: test_fixed_xor.ml
+  Build$: flag(tests) 
+  Install: false
+  BuildDepends: bytestring, oUnit
+
+Executable test_frequency_analyzer
+  Path: .
+  MainIs: test_frequency_analyzer.ml
+  Build$: flag(tests) 
+  Install: false
+  CompiledObject: best
+  BuildDepends: bytestring, oUnit
+
+Test test_fixed_xor
+  Run$: flag(tests)
+  Command: $test_fixed_xor
+
+Test test_base64
+  Run$: flag(tests)
+  Command: $test_base64
+
+Test test_frequency_analyzer
+  Run$: flag(tests)
+  Command: $test_frequency_analyzer
