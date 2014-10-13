@@ -10,39 +10,25 @@ OASISFormat: 0.4
 BuildTools: ocamlbuild
 Plugins: META (0.4), DevFiles (0.4)
 
-Library bytestring
-  Path: .
+Library bs
+  Path: lib
   Modules: Bytestring
+  Install: false
 
-Executable "test_base64"
-  Path: .
-  MainIs: test_base64.ml
-  Build$: flag(tests) 
-  BuildDepends: oUnit
+Library fixedxor
+  Path: lib
+  Modules: Fixed_xor
+  Install: false
+  FindlibParent: bs
+  BuildDepends: bs
 
 Executable test_fixed_xor
-  Path: .
+  Path: test/
+#  Build$: flag(tests)
   MainIs: test_fixed_xor.ml
-  Build$: flag(tests) 
-  Install: false
-  BuildDepends: bytestring, oUnit
-
-Executable test_frequency_analyzer
-  Path: .
-  MainIs: test_frequency_analyzer.ml
-  Build$: flag(tests) 
-  Install: false
-  CompiledObject: best
-  BuildDepends: bytestring, oUnit
+  BuildDepends: fixedxor, oUnit
 
 Test test_fixed_xor
-  Run$: flag(tests)
+  TestTools: test_fixed_xor
   Command: $test_fixed_xor
-
-Test test_base64
   Run$: flag(tests)
-  Command: $test_base64
-
-Test test_frequency_analyzer
-  Run$: flag(tests)
-  Command: $test_frequency_analyzer
