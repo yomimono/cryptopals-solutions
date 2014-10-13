@@ -49,4 +49,17 @@ module Bytestring = struct
     let string_list = List.map (Printf.sprintf "%c") char_list in
     String.concat "" string_list
 
+  let hexstring_to_ascii s =
+    int_list_to_ascii (hexstring_to_int_list s)
+
+  let rec ascii_to_int_list (s: string) =
+    let l = String.length s in
+    match l with
+    | 0 -> []
+    | _ -> (int_of_char (String.get s 0)) :: 
+           ascii_to_int_list (String.sub s 1 (l - 1))
+
+  let ascii_to_hexstring s =
+    int_list_to_hexstring (ascii_to_int_list s)
+
 end

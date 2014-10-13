@@ -18,12 +18,21 @@ let empty_strings _ =
   assert_equal (Frequency_analyzer.most_common "") None;
   assert_equal (Frequency_analyzer.try_decode "") ""
 
+let decodes_string _ =
+  let open Bytestring in
+  let test_string =
+    "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736" 
+  in
+  let decoded = Frequency_analyzer.try_decode test_string in
+  assert_equal (Bytestring.hexstring_to_ascii decoded) "Cooking MC's like a pound of bacon"
+
 let suite =
   "suite" >:::
   [
     "simple-counts-accurate" >:: counts_accurate ;
     "most-common-accurate" >:: most_common_accurate ;
-    "empty-strings" >:: empty_strings
+    "empty-strings" >:: empty_strings;
+    "decodes_string" >:: decodes_string
   ]
 
 let _ =

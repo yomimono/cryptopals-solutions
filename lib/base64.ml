@@ -1,6 +1,7 @@
 module Base64 : sig
 
-  val base64_of_hex : string -> string
+  val base64_of_hex : string -> 
+    [ `Invalid_argument of string | `Ok of string ]
 
 end = struct
   let valid_base64_chars =

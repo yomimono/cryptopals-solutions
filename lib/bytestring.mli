@@ -7,5 +7,9 @@ module Bytestring : sig
   val hexstring_to_int_list : string -> int list
   (** Represent a list of 8-bit integers as an ASCII string *)
   val int_list_to_ascii : int list -> string
-
+  (** Decode a hex string as ASCII characters and return the resulting string.
+  *)
+  val hexstring_to_ascii : string -> string
+  (** Represent a string of ASCII characters as a hex string. *)
+  val ascii_to_hexstring : string -> string
 end 

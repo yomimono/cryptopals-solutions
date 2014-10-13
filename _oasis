@@ -7,29 +7,59 @@ License: LGPL
 Description: OCaml modules for solving problems from Cryptopals Set 1.
 
 OASISFormat: 0.4
-#BuildTools: ocamlbuild
+BuildTools: ocamlbuild
 Plugins: META (0.4), DevFiles (0.4)
 
-Library bs
+Library set1
   Path: lib
-  Modules: Bytestring
-  BuildTools: ocamlbuild
+  Modules: Base64, Bytestring, Fixed_xor, Frequency_analyzer, Repeating_xor
 
-Library fixedxor
-  Path: lib
-  Modules: Fixed_xor
-  Install: false
-  BuildTools: ocamlbuild
-  BuildDepends: bs
+Executable problem_4
+  Path: src
+  MainIs: problem_4.ml
+  BuildDepends: core, threads, set1
+
+Executable rxor
+  Path: src
+  MainIs: rxor.ml
+  BuildDepends: set1
+
+Executable test_bytestring
+  Path: test
+  MainIs: test_bytestring.ml
+  BuildDepends: set1, oUnit
+
+Executable test_base64
+  Path: test
+  MainIs: test_base64.ml
+  BuildDepends: set1, oUnit
 
 Executable test_fixed_xor
-  Path: test/
-#  Build$: flag(tests)
-  BuildTools: ocamlbuild
+  Path: test
   MainIs: test_fixed_xor.ml
-  BuildDepends: fixedxor, oUnit
+  BuildDepends: set1, oUnit
 
-#Test test_fixed_xor
-#  TestTools: test_fixed_xor
-#  Command: $test_fixed_xor
-#  Run$: flag(tests)
+Executable test_frequency_analyzer
+  Path: test
+  MainIs: test_frequency_analyzer.ml
+  BuildDepends: set1, oUnit
+
+Executable test_repeating_xor
+  Path: test
+  MainIs: test_repeating_xor.ml
+  BuildDepends: set1, oUnit
+
+Test test_bytestring
+  Command: $test_bytestring
+
+Test test_base64
+  Command: $test_base64
+
+Test test_fixed_xor
+  Command: $test_fixed_xor
+
+Test test_frequency_analyzer
+  Command: $test_frequency_analyzer
+
+Test test_repeating_xor
+  Command: $test_repeating_xor
