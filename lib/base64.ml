@@ -1,6 +1,8 @@
-open OUnit2
+module Base64 : sig
 
-module Base64 = struct
+  val base64_of_hex : string -> string
+
+end = struct
   let valid_base64_chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" 
 

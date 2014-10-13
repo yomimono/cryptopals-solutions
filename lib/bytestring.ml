@@ -1,4 +1,4 @@
-module Fixed_xor = struct
+module Bytestring = struct
 
   let map_char_to_int c =
     let normalized = Char.lowercase c in
@@ -33,18 +33,20 @@ module Fixed_xor = struct
     | n when n mod 2 <> 0 -> raise (Invalid_argument "odd number of hex digits")
     | l -> String.sub str 0 2 :: pairwise (String.sub str 2 (l - 2))
 
+  let rec int_list_to_hexstring_list l =
+    match l with 
+    | [] -> []
+    | hd :: tl -> (Printf.sprintf "%02x" hd) :: int_list_to_hexstring_list tl
+
+  let int_list_to_hexstring l =
+    String.concat "" (int_list_to_hexstring_list l)
+
   let hexstring_to_int_list hex =
     List.map pair_to_byte (pairwise hex)
 
-  let rec int_list_to_hexstring l =
-    match l with 
-    | [] -> []
-    | hd :: tl -> (Printf.sprintf "%x" hd) :: int_list_to_hexstring tl
-
-  let xor str1 str2 =
-    let str1_pw = hexstring_to_int_list str1 in
-    let str2_pw = hexstring_to_int_list str2 in
-    let int_list_xord = List.map2 (lxor) str1_pw str2_pw in
-    String.concat "" (int_list_to_hexstring int_list_xord);
+  let int_list_to_ascii l = 
+    let char_list = List.map char_of_int l in
+    let string_list = List.map (Printf.sprintf "%c") char_list in
+    String.concat "" string_list
 
 end

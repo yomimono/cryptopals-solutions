@@ -7,28 +7,29 @@ License: LGPL
 Description: OCaml modules for solving problems from Cryptopals Set 1.
 
 OASISFormat: 0.4
-BuildTools: ocamlbuild
+#BuildTools: ocamlbuild
 Plugins: META (0.4), DevFiles (0.4)
 
 Library bs
   Path: lib
   Modules: Bytestring
-  Install: false
+  BuildTools: ocamlbuild
 
 Library fixedxor
   Path: lib
   Modules: Fixed_xor
   Install: false
-  FindlibParent: bs
+  BuildTools: ocamlbuild
   BuildDepends: bs
 
 Executable test_fixed_xor
   Path: test/
 #  Build$: flag(tests)
+  BuildTools: ocamlbuild
   MainIs: test_fixed_xor.ml
   BuildDepends: fixedxor, oUnit
 
-Test test_fixed_xor
-  TestTools: test_fixed_xor
-  Command: $test_fixed_xor
-  Run$: flag(tests)
+#Test test_fixed_xor
+#  TestTools: test_fixed_xor
+#  Command: $test_fixed_xor
+#  Run$: flag(tests)
