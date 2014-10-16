@@ -63,10 +63,34 @@ let three_bytes_to_chars left middle right =
         %d %d" left middle right) in
     `Invalid_argument err_string
 
+module Decode = struct
+  let tuple s =
+    let char_or_padding c =
+      match c with
+      | '=' -> `Padding
+      | i -> six_bit_int_of_char i
+    in
+    (char_or_padding (String.get s 0), 
+     char_or_padding (String.get s 1),
+     char_or_padding (String.get s 2),
+     char_or_padding (String.get s 3))
+
+  let first leftmost leftmid = 
+    ((leftmost land 63) lsl 2) + ((leftmid land 48) lsr 4)
+
+  let midchar l r = 
+    ((l land 15) lsl 4) + ((r lsr 2) land 15)
+
+  let last mr_int rr_int =
+    ((mr_int land 3) lsl 6) + (rr_int land 63)
+
+end
+
 (** hex -> base64 *)
 (* take 3 chars at a time and slice them into 4 chars. *)
 (* input is a string in hex format, so each "char" is two chars *)
 let rec base64_of_hex hex =
+
   match (String.length hex) with
   | l when l mod 2 <> 0 -> `Invalid_argument "Uneven number of hex digits"
   | 0 -> `Ok ""
@@ -111,41 +135,22 @@ let rec base64_of_hex hex =
       `Invalid_argument s
 
 let rec hex_of_base64 base64 =
-  let tuple s =
-    let char_or_padding c =
-      match c with
-      | '=' -> `Padding
-      | i -> six_bit_int_of_char i
-    in
-    (char_or_padding (String.get s 0), 
-     char_or_padding (String.get s 1),
-     char_or_padding (String.get s 2),
-     char_or_padding (String.get s 3))
-  in
-
   (* take 4 chars, slice them into 3 chars, do reverse lookup byte-to-pair *)
   match (String.length base64) with
   | 0 -> `Ok ""
   | 4 -> (
-      let (ll, lmid, midright, rr) = tuple (String.sub base64 0 4) in
-      match ll, lmid with
-      | `Ok leftmost, `Ok leftmid -> (
-          let midchar l r = ((l land 15) lsl 4) + ((r lsr 2) land 15) in
-          let first = (((leftmost land 63) lsl 2) + ((leftmid land 48) lsr 4)) in
-          match midright, rr with
-          | `Padding, `Padding -> (* 2 padding chars, only 1st char is valid *)
-            `Ok (Printf.sprintf "%02x" first)
-          | `Ok mr_int, `Padding -> (* last char is padding, we have 3 valid chars *)
-            `Ok (Printf.sprintf "%02x%02x" first (midchar leftmid mr_int))
-          | `Ok mr_int, `Ok rr_int -> (* all 3 are valid *)
-            let last = ((mr_int land 3) lsl 6) + (rr_int land 63) in
-            `Ok (Printf.sprintf "%02x%02x%02x" 
-                   first (midchar leftmid mr_int) last)
-          | _, _ -> `Invalid_argument "Unparseable chunk in base64"
-        )
-      | `Padding , _ -> `Invalid_argument "Initial character nonsensical"
-      | _, _ -> `Invalid_argument "Unparseable chunk in base64"
-
+      match Decode.tuple (String.sub base64 0 4) with
+      | `Ok leftmost, `Ok leftmid, `Padding, `Padding -> 
+        `Ok (Printf.sprintf "%02x" (Decode.first leftmost leftmid))
+      | `Ok leftmost, `Ok leftmid, `Ok mr_int, `Padding ->
+        `Ok (Printf.sprintf "%02x%02x" (Decode.first leftmost leftmid) 
+               (Decode.midchar leftmid mr_int))
+      | `Ok leftmost, `Ok leftmid, `Ok mr_int, `Ok rr_int ->
+        `Ok ((Printf.sprintf "%02x%02x%02x" 
+                (Decode.first leftmost leftmid) 
+                (Decode.midchar leftmid mr_int) 
+                (Decode.last mr_int rr_int)))
+      | _, _, _, _ -> `Invalid_argument "Unparseable chunk in base64"
     )
   | l when l mod 4 <> 0 -> `Invalid_argument "Strange number of characters"
   | p -> 
@@ -154,6 +159,31 @@ let rec hex_of_base64 base64 =
     let next = (hex_of_base64 (String.sub base64 4 (p-4))) in
     match (this, next) with
     | `Ok p, `Ok q -> `Ok (Printf.sprintf "%s%s" p q)
+    | `Invalid_argument s, _ | _, `Invalid_argument s ->
+      `Invalid_argument s
+
+let rec int_list_of_base64 base64 =
+  match (String.length base64) with
+  | 0 -> `Ok []
+  | 4 -> (
+      match Decode.tuple (String.sub base64 0 4) with
+      | `Ok leftmost, `Ok leftmid, `Padding, `Padding -> 
+        `Ok [(Decode.first leftmost leftmid)]
+      | `Ok leftmost, `Ok leftmid, `Ok mr_int, `Padding ->
+        `Ok [( Decode.first leftmost leftmid) ; (Decode.midchar leftmid mr_int)]
+      | `Ok leftmost, `Ok leftmid, `Ok mr_int, `Ok rr_int ->
+        `Ok [ (Decode.first leftmost leftmid) 
+            ; (Decode.midchar leftmid mr_int) 
+            ; (Decode.last mr_int rr_int) ]
+      | _, _, _, _ -> `Invalid_argument "Unparseable chunk in base64"
+    )
+  | l when l mod 4 <> 0 -> `Invalid_argument "Strange number of characters"
+  | p -> 
+    let prefix = String.sub base64 0 4 in
+    let this = (int_list_of_base64 prefix) in
+    let next = (int_list_of_base64 (String.sub base64 4 (p-4))) in
+    match (this, next) with
+    | `Ok p, `Ok q -> `Ok (List.append p q)
     | `Invalid_argument s, _ | _, `Invalid_argument s ->
       `Invalid_argument s
 

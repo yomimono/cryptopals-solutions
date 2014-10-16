@@ -42,7 +42,7 @@ Executable rxor
 Executable break_xor
   Path: src
   MainIs: problem_6.ml
-  BuildDepends: base64, core, threads, cmdliner, impls
+  BuildDepends: base64, hexstring, core, threads, cmdliner, impls
 
 Executable test_hexstring
   Path: test

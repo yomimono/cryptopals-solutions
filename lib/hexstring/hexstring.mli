@@ -1,4 +1,4 @@
-type t
+type t 
 
 (** Transform a list of 8-bit integers to a hexadecimal string *)
 val t_of_int_list_exn: int list -> t

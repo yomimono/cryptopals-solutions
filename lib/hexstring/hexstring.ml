@@ -70,3 +70,8 @@ let int_list_of_t t =
 let t_of_int_list_exn l =
   hexstring_of_int_list l
 
+let string_of_t (t : t) = (t : string)
+
+let t_of_string_exn (s : string) = 
+  let _l = int_list_of_hexstring s in
+  (s : t)
