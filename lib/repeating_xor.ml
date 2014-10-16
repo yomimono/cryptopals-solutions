@@ -13,9 +13,8 @@ let rec repeat_xor_stream key in_stream out_channel =
   let rec next_n s l n =
     if n = 0 then List.rev l
     else
-      match Stream.next s with
-      | c -> next_n s (c :: l) (n - 1)
-      | exception Stream.Failure -> List.rev l
+      try (next_n s (Stream.next s :: l) (n - 1)) with
+      | Stream.Failure -> List.rev l
   in
   let batchlength = (String.length key) * 5 in
   let next_slice = next_n in_stream [] batchlength in
