@@ -10,47 +10,57 @@ OASISFormat: 0.4
 BuildTools: ocamlbuild
 Plugins: META (0.4), DevFiles (0.4)
 
-Library set1
+Library hexstring
+  Path: lib/hexstring
+  Modules: Hexstring
+
+Library fixed_xor
+  Path: lib/fixed_xor
+  Modules: Fixed_xor
+  BuildDepends: hexstring
+
+Library impls
   Path: lib
-  Modules: Base64, Bytestring, Fixed_xor, Frequency_analyzer, Repeating_xor
+  Modules: Base64, Frequency_analyzer, Repeating_xor
+  BuildDepends: hexstring, fixed_xor
 
 Executable problem_4
   Path: src
   MainIs: problem_4.ml
-  BuildDepends: core, threads, set1
+  BuildDepends: core, threads, impls
 
 Executable rxor
   Path: src
   MainIs: rxor.ml
-  BuildDepends: set1
+  BuildDepends: cmdliner, impls
 
-Executable test_bytestring
+Executable test_hexstring
   Path: test
-  MainIs: test_bytestring.ml
-  BuildDepends: set1, oUnit
+  MainIs: test_hexstring.ml
+  BuildDepends: impls, oUnit
 
 Executable test_base64
   Path: test
   MainIs: test_base64.ml
-  BuildDepends: set1, oUnit
+  BuildDepends: impls, oUnit
 
 Executable test_fixed_xor
   Path: test
   MainIs: test_fixed_xor.ml
-  BuildDepends: set1, oUnit
+  BuildDepends: impls, oUnit
 
 Executable test_frequency_analyzer
   Path: test
   MainIs: test_frequency_analyzer.ml
-  BuildDepends: set1, oUnit
+  BuildDepends: impls, oUnit
 
 Executable test_repeating_xor
   Path: test
   MainIs: test_repeating_xor.ml
-  BuildDepends: set1, oUnit
+  BuildDepends: impls, oUnit
 
-Test test_bytestring
-  Command: $test_bytestring
+Test test_hexstring
+  Command: $test_hexstring
 
 Test test_base64
   Command: $test_base64

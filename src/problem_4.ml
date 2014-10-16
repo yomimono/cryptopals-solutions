@@ -2,11 +2,11 @@ open Core.Std
 
 let find_strings file =
   let open Frequency_analyzer in
-  let open Bytestring in
   In_channel.with_file file ~f:(fun f ->
-      let encoded_strings = (In_channel.input_lines f : string list) in
+      let encoded_strings = List.map ~f:Hexstring.t_of_ascii 
+                                        (In_channel.input_lines f ) in
       let decoded_strings = List.map ~f:Frequency_analyzer.try_decode encoded_strings in 
-      let ascii_strings = List.map ~f:Bytestring.hexstring_to_ascii decoded_strings in
+      let ascii_strings = List.map ~f:Hexstring.ascii_of_t decoded_strings in
       ignore (List.map ~f:(Printf.printf "%s\n") ascii_strings);
       ()
   )
