@@ -19,9 +19,14 @@ Library fixed_xor
   Modules: Fixed_xor
   BuildDepends: hexstring
 
+Library base64
+  Path: lib/base64
+  Modules: Base64
+  BuildDepends: hexstring
+
 Library impls
   Path: lib
-  Modules: Base64, Frequency_analyzer, Repeating_xor
+  Modules: Frequency_analyzer, Repeating_xor, Hamming
   BuildDepends: hexstring, fixed_xor
 
 Executable problem_4
@@ -34,6 +39,11 @@ Executable rxor
   MainIs: rxor.ml
   BuildDepends: cmdliner, impls
 
+Executable break_xor
+  Path: src
+  MainIs: problem_6.ml
+  BuildDepends: base64, core, threads, cmdliner, impls
+
 Executable test_hexstring
   Path: test
   MainIs: test_hexstring.ml
@@ -42,7 +52,7 @@ Executable test_hexstring
 Executable test_base64
   Path: test
   MainIs: test_base64.ml
-  BuildDepends: impls, oUnit
+  BuildDepends: base64, oUnit
 
 Executable test_fixed_xor
   Path: test
@@ -59,6 +69,11 @@ Executable test_repeating_xor
   MainIs: test_repeating_xor.ml
   BuildDepends: impls, oUnit
 
+Executable test_hamming
+  Path: test
+  MainIs: test_hamming.ml
+  BuildDepends: impls, oUnit
+
 Test test_hexstring
   Command: $test_hexstring
 
@@ -73,3 +88,6 @@ Test test_frequency_analyzer
 
 Test test_repeating_xor
   Command: $test_repeating_xor
+
+Test test_hamming
+  Command: $test_hamming

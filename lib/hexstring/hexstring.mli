@@ -13,3 +13,10 @@ val ascii_of_t: t -> string
 (** Represent a string of ASCII characters as a hex string. *)
 val t_of_ascii: string -> t
 
+(** Dump the hexstring to a string of the form %02x%02x... *)
+val string_of_t: t -> string
+
+(** Attempt to make a hexstring from a string containing an even number
+  * of valid characters that might represent hexadecimal numbers. 
+  * Violation of either constraint raises Invalid_argument . *)
+val t_of_string_exn: string -> t
