@@ -7,3 +7,4 @@ let distance a b =
   let diffbits = List.map2 (lxor) a b in  (* TODO: handle unequal lengths *)
   let diffcount = List.map bitcount diffbits in
   List.fold_left (+) 0 diffcount
+

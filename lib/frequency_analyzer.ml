@@ -34,11 +34,14 @@ let most_common str =
   if Hashtbl.length freq_map = 0 then None
   else Some most_common
 
+let best_guess_key l = 
+  let freq_map = count_occurrences (Hashtbl.create 255) l in
+  let (most_common, _) = Hashtbl.fold fold_hashmap freq_map (0, 0) in
+  (List.hd english_frequents) lxor most_common
+
 let try_decode str =
   let l = Hexstring.int_list_of_t str in
-  let freq_map = get_count str in
-  let (most_common, _) = Hashtbl.fold fold_hashmap freq_map (0, 0) in
-  let xor = (List.hd english_frequents) lxor most_common in
+  let xor = best_guess_key l in
   (* let char_map_result = List.map char_of_int (List.map ((lxor) xor) l) *)
   let int_list_result = (List.map ((lxor) xor) l) in
   (Hexstring.t_of_int_list_exn int_list_result)

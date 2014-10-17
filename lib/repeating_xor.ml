@@ -29,3 +29,16 @@ let rec repeat_xor_stream key in_stream out_channel =
 
 let rxor_exn key file =
   repeat_xor_stream key (Stream.of_channel (open_in file)) stdout
+
+let rec repeat_xor_int_list key plaintext =
+  let open Core.Std in
+  let (keyl, ptl) = (List.length key, List.length plaintext) in
+  match compare keyl ptl with
+  | 0 -> Fixed_xor.xor_int_list key plaintext
+  | 1 -> (* key longer than plaintext *)
+    Fixed_xor.xor_int_list (List.slice key 0 ptl) plaintext
+  | _ -> (* plaintext longer than key *)
+    let this, next = List.split_n plaintext keyl in
+    (Fixed_xor.xor_int_list key this) @ 
+    (repeat_xor_int_list key next)
+
