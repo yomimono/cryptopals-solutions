@@ -27,7 +27,12 @@ Library base64
 Library impls
   Path: lib
   Modules: Frequency_analyzer, Repeating_xor, Hamming
-  BuildDepends: hexstring, fixed_xor
+  BuildDepends: core, threads, hexstring, fixed_xor
+
+Library break_rxor
+  Path: lib/break_rxor
+  Modules: Break_rxor
+  BuildDepends: core, threads, impls
 
 Executable problem_4
   Path: src
@@ -42,7 +47,7 @@ Executable rxor
 Executable break_xor
   Path: src
   MainIs: problem_6.ml
-  BuildDepends: base64, hexstring, core, threads, cmdliner, impls
+  BuildDepends: base64, break_rxor, hexstring, core, threads, cmdliner, impls
 
 Executable test_hexstring
   Path: test
@@ -67,12 +72,17 @@ Executable test_frequency_analyzer
 Executable test_repeating_xor
   Path: test
   MainIs: test_repeating_xor.ml
-  BuildDepends: impls, oUnit
+  BuildDepends: core, threads, impls, oUnit
 
 Executable test_hamming
   Path: test
   MainIs: test_hamming.ml
   BuildDepends: impls, oUnit
+
+Executable test_break_rxor
+  Path: test
+  MainIs: test_break_rxor.ml
+  BuildDepends: break_rxor, impls, oUnit
 
 Test test_hexstring
   Command: $test_hexstring
@@ -91,3 +101,6 @@ Test test_repeating_xor
 
 Test test_hamming
   Command: $test_hamming
+
+Test test_break_rxor
+  Command: $test_break_rxor
