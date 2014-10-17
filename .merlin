@@ -1,0 +1,8 @@
+PKG oUnit
+PKG core
+S src
+S test
+S lib
+B _build/**
+B src
+B lib
