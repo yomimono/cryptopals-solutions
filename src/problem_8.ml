@@ -15,10 +15,6 @@ let find_aes_ebc file =
     let heads = List.map ~f:List.hd_exn grouped in
     List.zip_exn counts heads
   in
-  let print_counts (l : (int * string) list) = 
-    String.concat ~sep:" "
-      (List.map ~f:(fun (a, b) -> Printf.sprintf "(%d, %s) " a b) l)
-  in
   let repeats (l: (int * string) list) =
     List.filter ~f:(fun (a, b) -> match a with | 1 -> false | _ -> true) l
   in
