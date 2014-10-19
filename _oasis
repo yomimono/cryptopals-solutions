@@ -49,6 +49,16 @@ Executable break_xor
   MainIs: problem_6.ml
   BuildDepends: base64, break_rxor, hexstring, core, threads, cmdliner, impls
 
+Executable aes_ebc_decrypt
+  Path: src
+  MainIs: problem_7.ml
+  BuildDepends: core, threads, base64, cmdliner, cryptokit
+
+Executable detect_aes_ebc
+  Path: src
+  MainIs: problem_8.ml
+  BuildDepends: core, threads, cmdliner, cryptokit
+
 Executable test_hexstring
   Path: test
   MainIs: test_hexstring.ml
