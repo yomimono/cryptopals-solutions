@@ -21,7 +21,9 @@ let break_xor file =
            let tx_blocks = (transpose_blocks (blocks (snd best) d [])) in
            let guesses = (guess_keys tx_blocks) in
            Printf.printf "Recovered key: %s\n" (List.to_string ~f:(Printf.sprintf
-                                                  "%02x") guesses);
+                                                                     "%02x") guesses);
+           Printf.printf "(ASCII: %s)\n" (List.to_string ~f:(Printf.sprintf
+                                   "%c") (List.map ~f:char_of_int guesses));
            let attempted_decrypt = Repeating_xor.repeat_xor_int_list guesses d
                in
            let readable_attempted_decrypt = Hexstring.ascii_of_int_list
