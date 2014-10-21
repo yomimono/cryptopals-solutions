@@ -59,6 +59,11 @@ Executable detect_aes_ebc
   MainIs: problem_8.ml
   BuildDepends: core, threads, cmdliner, cryptokit
 
+Executable encrypt_aes_cbc
+  Path: src
+  MainIs: problem_10.ml
+  BuildDepends: core, threads, cmdliner, cryptokit
+
 Executable test_hexstring
   Path: test
   MainIs: test_hexstring.ml

@@ -12,6 +12,7 @@ let aes_decrypt key file =
        | `Ok d -> (* base64 was valid, yay! *)
          let decryptor = C.aes ~mode:C.ECB key C.Decrypt in
          ignore (List.map ~f:(decryptor#put_byte) d);
+         decryptor#finish;
          let plaintext = decryptor#get_string in
          Printf.printf "%s\n" plaintext;
          `Ok plaintext

@@ -1,5 +1,19 @@
 type t = string
 
+let pad padding l =
+  match padding with
+  | None -> l
+  | Some p -> 
+    let padbytes = (p - ((List.length l) mod p)) in
+    if padbytes > 255 then raise (Invalid_argument "Can't pad that many bytes")
+    else
+      let rec make_padlist v n acc = 
+        match n with 
+        | 0 -> acc
+        | q -> make_padlist v (n-1) (v :: acc)
+      in
+      l @ (make_padlist padbytes padbytes [])
+
 let int_list_of_hexstring ?padding hex =
   let pair_to_byte str =
     let map_char_to_int c =
@@ -36,20 +50,7 @@ let int_list_of_hexstring ?padding hex =
     | l -> String.sub str 0 2 :: pairwise (String.sub str 2 (l - 2))
   in
   let l = List.map pair_to_byte (pairwise hex) in
-  match padding with
-  | None -> l
-  | Some p -> 
-    let padbytes = (p - ((List.length l) mod p)) in
-    if padbytes > 255 then raise (Invalid_argument "Can't pad that many bytes")
-    else
-      let rec make_padlist v n acc = 
-        match n with 
-        | 0 -> acc
-        | q -> make_padlist v (n-1) (v :: acc)
-      in
-      l @ (make_padlist padbytes padbytes [])
-
-    
+  pad padding l
 
 let hexstring_of_int_list l =
   let rec int_list_to_hexstring_list l =

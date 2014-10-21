@@ -22,3 +22,7 @@ val string_of_t: t -> string
   * of valid characters that might represent hexadecimal numbers. 
   * Violation of either constraint raises Invalid_argument . *)
 val t_of_string_exn: string -> t
+
+(** Pad the int list to an even number of blocks of the given size using PKCS7
+    scheme. *)
+val pad : int option -> int list -> int list

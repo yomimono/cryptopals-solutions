@@ -86,11 +86,14 @@ module Decode = struct
 
 end
 
+
 (** hex -> base64 *)
 (* take 3 chars at a time and slice them into 4 chars. *)
 (* input is a string in hex format, so each "char" is two chars *)
 let rec base64_of_hex hex =
 
+  (* TODO: functorize over string and list -- both libraries provide
+   * the necessary functions in Core.Std *)
   match (String.length hex) with
   | l when l mod 2 <> 0 -> `Invalid_argument "Uneven number of hex digits"
   | 0 -> `Ok ""
@@ -133,6 +136,11 @@ let rec base64_of_hex hex =
     | `Ok p, `Ok q -> `Ok (Printf.sprintf "%s%s" p q)
     | `Invalid_argument s, _ | _, `Invalid_argument s ->
       `Invalid_argument s
+
+(** int list -> base64 *)
+let base64_of_int_list l =
+  (* TODO: this is a stupid way to do this; refactor and encode directly *)
+  base64_of_hex (String.concat "" (List.map (Printf.sprintf "%02x") l))
 
 let rec hex_of_base64 base64 =
   (* take 4 chars, slice them into 3 chars, do reverse lookup byte-to-pair *)
