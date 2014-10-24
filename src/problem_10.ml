@@ -3,12 +3,7 @@ open Cmdliner
 
 (* use an ECB encryptor to get CBC behavior by recombinating the 
           ciphertext with the next block's plaintext ourselves. *)
-let xor_blocks 
-    direction
-    ( key : string ) 
-    ( blocksize : int )
-    ( text_so_far : int list ) 
-    ( right_text : int list ) : ( int list ) =
+let xor_blocks direction key blocksize text_so_far right_text =
   let module C = Cryptokit.Cipher in
   let cryptor = C.aes ~mode:C.ECB key direction in
   (* use the last 16 bytes of text_so_far as our obscuring value *)
