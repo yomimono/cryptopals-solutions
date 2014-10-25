@@ -24,6 +24,11 @@ Library base64
   Modules: Base64
   BuildDepends: hexstring
 
+Library aes_cbc
+  Path: lib/aes_cbc
+  Modules: Aes_cbc
+  BuildDepends: cryptokit, core, threads, hexstring
+
 Library impls
   Path: lib
   Modules: Frequency_analyzer, Repeating_xor, Hamming
@@ -99,6 +104,11 @@ Executable test_break_rxor
   MainIs: test_break_rxor.ml
   BuildDepends: break_rxor, impls, oUnit
 
+Executable test_aes_cbc
+  Path: test
+  MainIs: test_aes_cbc.ml
+  BuildDepends: aes_cbc, hexstring, oUnit
+
 Test test_hexstring
   Command: $test_hexstring
 
@@ -119,3 +129,6 @@ Test test_hamming
 
 Test test_break_rxor
   Command: $test_break_rxor
+
+Test test_aes_cbc
+  Command: $test_aes_cbc
