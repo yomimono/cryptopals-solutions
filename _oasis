@@ -29,6 +29,11 @@ Library aes_cbc
   Modules: Aes_cbc
   BuildDepends: cryptokit, core, threads, hexstring
 
+Library aes_ecb
+  Path: lib/aes_ecb
+  Modules: Aes_ecb
+  BuildDepends: cryptokit, core, threads, hexstring
+
 Library impls
   Path: lib
   Modules: Frequency_analyzer, Repeating_xor, Hamming
@@ -38,6 +43,11 @@ Library break_rxor
   Path: lib/break_rxor
   Modules: Break_rxor
   BuildDepends: core, threads, impls
+
+Library cbc_ecb_oracle
+  Path: lib/oracle
+  Modules: Cbc_ecb_oracle
+  BuildDepends: aes_cbc, aes_ecb, cryptokit, core, threads
 
 Executable problem_4
   Path: src
@@ -57,12 +67,12 @@ Executable break_xor
 Executable aes_ebc_decrypt
   Path: src
   MainIs: problem_7.ml
-  BuildDepends: core, threads, base64, cmdliner, cryptokit
+  BuildDepends: aes_ecb, core, threads, base64, cmdliner, cryptokit
 
 Executable detect_aes_ebc
   Path: src
   MainIs: problem_8.ml
-  BuildDepends: core, threads, cmdliner, cryptokit
+  BuildDepends: aes_ecb, core, threads, cmdliner, cryptokit
 
 Executable encrypt_aes_cbc
   Path: src
@@ -109,6 +119,11 @@ Executable test_aes_cbc
   MainIs: test_aes_cbc.ml
   BuildDepends: aes_cbc, hexstring, oUnit
 
+Executable test_cbc_ecb_oracle
+  Path: test
+  MainIs: test_cbc_ecb_oracle.ml
+  BuildDepends: cbc_ecb_oracle, oUnit
+
 Test test_hexstring
   Command: $test_hexstring
 
@@ -132,3 +147,6 @@ Test test_break_rxor
 
 Test test_aes_cbc
   Command: $test_aes_cbc
+
+Test test_cbc_ecb_oracle
+  Command: $test_cbc_ecb_oracle
