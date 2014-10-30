@@ -4,15 +4,17 @@ let pad padding l =
   match padding with
   | None -> l
   | Some p -> 
-    let padbytes = (p - ((List.length l) mod p)) in
-    if padbytes > 255 then raise (Invalid_argument "Can't pad that many bytes")
-    else
-      let rec make_padlist v n acc = 
-        match n with 
-        | 0 -> acc
-        | q -> make_padlist v (n-1) (v :: acc)
-      in
-      l @ (make_padlist padbytes padbytes [])
+    let overage = ((List.length l) mod p) in
+    if overage = 0 then l else
+      let padbytes = (p - overage) in
+      if padbytes > 255 then raise (Invalid_argument "Can't pad that many bytes")
+      else
+        let rec make_padlist v n acc = 
+          match n with 
+          | 0 -> acc
+          | q -> make_padlist v (n-1) (v :: acc)
+        in
+        l @ (make_padlist padbytes padbytes [])
 
 let int_list_of_hexstring ?padding hex =
   let pair_to_byte str =

@@ -22,7 +22,10 @@ let test_hexstring_of_ascii context =
 let test_pkcs7_padding context =
   let test_input = (Hexstring.t_of_ascii "c0ffee") in
   let expected_output = [99;48;102;102;101;101;2;2] in
-  assert_equal expected_output (Hexstring.int_list_of_t ~padding:4 test_input)
+  assert_equal expected_output (Hexstring.int_list_of_t ~padding:4 test_input);
+  assert_equal 
+    ~printer:(fun l -> String.concat "" (List.map (Printf.sprintf "%02x") l))
+    [99;48;102;102;101;101] (Hexstring.int_list_of_t ~padding:6 test_input)
 
 let suite = 
   "hexstring-suite" >:::
