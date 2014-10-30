@@ -2,35 +2,37 @@ open OUnit2
 open Core.Std
 
 let key = Hexstring.int_list_of_t (Hexstring.t_of_ascii "YELLOW SUBMARINE")
+let printer l = (String.concat ~sep:"" (List.map ~f:(Printf.sprintf "0x%02x ;") l))
 
 let simple_encrypt c = 
   let module C = Cryptokit.Cipher in
-  let block_0 = List.init 16 (fun _f -> 81) in
-  let _aes_block_0 = [ 67;179;154; 70; 44; 117;46 ;176
-                     ;238;233;207; 84; 242;224;209;27 ] in
-  let block_1 = List.init 16 (fun _f -> 128) in
+  let block_0 = List.init 16 (fun _f -> 0x81) in
+  let aes_block_0 = [ 0xf1 ; 0x26 ; 0xc2 ; 0x36 ; 0x22 ; 0x57 ; 0xab ; 0x38 ;
+                       0x50 ; 0x78 ; 0x43 ; 0x65 ; 0x71 ; 0x85 ; 0x25 ; 0xaf ]
+  in
+  let block_1 = List.init 16 (fun _f -> 0x80) in
   (* the output from AES-encrypting (_aes_block_0 lxor block_1) with the key 
      "YELLOW SUBMARINE" *)
-  let second_encrypted_block = [ 038;  047;  006;  078;  105;  022;  055;  128;
-                                 066;  164;  017;  211;  034;  168;  180;  013]
-  in
-  let expected_output = List.append block_1 second_encrypted_block in
-  assert_equal expected_output (Aes_cbc.encrypt key (List.append block_0 block_1))
-
+  let second_encrypted_block = [ 0xca ; 0x9f ; 0xde ; 0xfe ; 0x11 ; 0xb3 ; 0x08 
+                               ; 0x17 ; 0x35 ; 0xe8 ; 0x62 ; 0xe5 ; 0x66 ; 0x28 
+                               ; 0x4f ; 0xf2 ] in
+  let expected_output = List.append aes_block_0 second_encrypted_block in
+  assert_equal ~printer:printer expected_output
+    (Aes_cbc.encrypt key (List.append block_0 block_1)) 
 
 let simple_decrypt c =
   (* test against the expected output from simple_encrypt *)
-  let input = [ 67;179;154; 70; 44; 117;46 ;176                          
-              ;238;233;207; 84; 242;224;209;27 ; 038;  047;  006;
-                078;  105;  022; 055;  128; 066; 164;  017;  211;
-                034;  168;  180; 013] in
-  let expected_output = List.append (List.init 16 (fun _f -> 81)) 
-      (List.init 16 (fun _f -> 128)) in
-  assert_equal expected_output (Aes_cbc.decrypt key input)
+  let input = [ 0xf1 ; 0x26 ; 0xc2 ; 0x36 ; 0x22 ; 0x57 ; 0xab ; 0x38 ;
+                0x50 ; 0x78 ; 0x43 ; 0x65 ; 0x71 ; 0x85 ; 0x25 ; 0xaf ;
+                0xca ; 0x9f ; 0xde ; 0xfe ; 0x11 ; 0xb3 ; 0x08 ; 0x17 ; 
+                0x35 ; 0xe8 ; 0x62 ; 0xe5 ; 0x66 ; 0x28 ; 0x4f ; 0xf2 ] in
+  let expected_output = List.append (List.init 16 (fun _f -> 0x81)) 
+      (List.init 16 (fun _f -> 0x80)) in
+  assert_equal ~printer:printer expected_output (Aes_cbc.decrypt key input)
 
 let empty_calls c = 
-  assert_equal [] (Aes_cbc.encrypt key []);
-  assert_equal [] (Aes_cbc.decrypt key [])
+  assert_equal ~printer:printer [] (Aes_cbc.encrypt key []);
+  assert_equal ~printer:printer [] (Aes_cbc.decrypt key [])
 
 let bad_input c = 
   (* invalid ints in key, data *)
