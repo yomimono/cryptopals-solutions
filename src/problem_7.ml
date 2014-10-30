@@ -5,16 +5,14 @@ let aes_decrypt key file =
   Printf.printf "trying to decrypt %s with %s\n" file key;
   In_channel.with_file file ~f:
     ( fun f ->
-       let module C = Cryptokit.Cipher in
        let base64_enc = (String.concat ~sep:"" (In_channel.input_lines f)) in
        match Base64.int_list_of_base64 base64_enc with
        | `Invalid_argument s -> `Error (false, s)
        | `Ok d -> (* base64 was valid, yay! *)
-         let decryptor = C.aes ~mode:C.ECB key C.Decrypt in
-         ignore (List.map ~f:(decryptor#put_byte) d);
-         decryptor#finish;
-         let plaintext = decryptor#get_string in
-         Printf.printf "%s\n" plaintext;
+         let plaintext = Aes_ecb.decrypt (Hexstring.int_list_of_t
+                                            (Hexstring.t_of_ascii key)) d in
+         Printf.printf "%s\n" (Hexstring.ascii_of_t (Hexstring.t_of_int_list_exn
+                                                       plaintext));
          `Ok plaintext
     )
 
